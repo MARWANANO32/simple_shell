@@ -49,10 +49,30 @@ void s_info(AWS *in, char **av)
 
 /**
  * f_info - the function for free struct
- * @in: the struct address
+ * @sk: the struct address
  * @a: the true
  */
-void f_info(AWS *in, int a)
+void f_info(AWS *sk, int a)
 {
+	sfree(sk->arv);
+	sk->arv = NULL;
+	sk->path = NULL;
 
+	if (a)
+	{
+		if (!sk->cmd_buffer)
+			free(sk->arg);
+		if (sk->env)
+			free_lists(&(sk->env));
+		if (sk->history)
+			free_lists(&(sk->history));
+		if (sk->alias)
+			free_lists(&(sk->alias));
+		sfree(sk->env);
+			sk->env = NULL;
+		_sfree((void **)sk->cmd_buffer);
+		if (sk->readfi > 2)
+			close(sk->readfi);
+		_putchar(BUF_FLUSH);
+	}
 }
