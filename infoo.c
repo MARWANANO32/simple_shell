@@ -35,7 +35,11 @@ void s_info(AWS *in, char **av)
 				info->argv[1] = NULL;
 			}
 		}
-		for (i = 0; in->argv && in->argv[i]; i++);
+		for (i = 0)
+		{
+			in->argv && in->argv[i];
+			i++;
+		}
 		in->argc = i;
 
 		rep_alias(in);
