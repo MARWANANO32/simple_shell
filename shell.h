@@ -134,6 +134,10 @@ char **list_string(OPPS_t *header);
 size_t p_list(const OPPS_t *w);
 opps_t *node_with(OPPS_t *node, char *pre, char s);
 ssize_t get_index(OPPS_t *header, OPPS_t *node);
-/******/
+
+/**shsh.c***/
+int hs(AWS *sk, char **av);
+int f_builtin(AWS *sk);
+
 
 #endif
