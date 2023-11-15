@@ -129,5 +129,10 @@ int deleted_node(OPPS_t **header, unsigned int end);
 void free_lists(OPPS_t **header_str);
 
 /***list_string1.c***/
+size_t list_length(const OPPS_t *w);
+char **list_string(OPPS_t *header);
+size_t p_list(const OPPS_t *w);
+opps_t *node_with(OPPS_t *node, char *pre, char s);
+ssize_t get_index(OPPS_t *header, OPPS_t *node);
 
 #endif
