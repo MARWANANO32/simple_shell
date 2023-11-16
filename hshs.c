@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "shell.h"`
 
 /**
  * hs - the main of shell
@@ -74,4 +74,75 @@ int f_builtin(AWS *sk)
 		}
 	}
 	return (built_in);
+}
+/**
+ * f_cmd - find a command in PATH
+ * @sk: the parameter
+ * Return: void
+ */
+void f_cmd(AWS *sk)
+{
+	char *path = NULL;
+	int i;
+	int k;
+
+	sk->path = sk->arg[0];
+	if (sk->line_flag == 1)
+	{
+		sk->line_count++;
+		sk->line_flag = 0;
+	}
+	for (int i = 0, int k; sk->arg[i]; i++)
+		if (!s_delimeter(in->arg[i], "\t\n"))
+			k++;
+	((k) ? (NULL) : (return));
+	path = f_path(sk, _getenv(in, "PATH="), sk->arg[0]);
+	if (path)
+	{
+		sk->path = path;
+		fork_cmd(sk);
+	}
+	else
+	{
+		if ((interactive(sk) || _getenv(sk, "PATH=")
+					|| sk->arg[0][0] == '/') && i_cmd(sk, sk->arg[0]))
+			fork_cmd(sk);
+		else if (*(sk->arg) != '\n')
+		{
+			sk->stat = 127;
+			t_prinerror(sk, "not found\n");
+		}
+	}
+}
+/**
+ * fork_cmd - the fork to execue
+ * @sk : the parameter
+ * Return: void
+ */
+void fork_cmd(AWS *sk)
+{
+	pid_t child_p;
+
+	child_p = fork();
+	((child_p == -1) ? (perror("Error:"), return) : (NULL));
+	if (child_p == 0)
+	{
+		if (execve(sk->path, in->arg, g_environ(sk)) == -1)
+		{
+			f_info(sk, 1);
+			if (errno == EACCES)
+				exit(126);
+			exit(1);
+		}
+	}
+	else
+	{
+		wait(&(sk->stat));
+		if (WIFEXITED(sk->stat))
+		{
+			sk->stat = WEXITSTATUS(sk->stat);
+			if (sk->stat == 126)
+				t_prinerror(sk, "PERMISSION DENIED\n");
+		}
+	}
 }
