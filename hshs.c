@@ -1,4 +1,4 @@
-#include "shell.h"`
+#include "shell.h"
 
 /**
  * hs - the main of shell
@@ -11,7 +11,7 @@ int hs(AWS *sk, char **av)
 	ssize_t r = 0;
 	int builtin_s = 0;
 
-	for (; r != -1 && builtin_s != -2)
+	for (; r != -1 && builtin_s != -2;)
 	{
 		c_info(sk);
 		if (interactive(sk))
@@ -32,13 +32,13 @@ int hs(AWS *sk, char **av)
 	}
 	w_history(sk);
 	f_info(sk, 1);
-	if (!interactive(sk) && sk->status)
-		exit(sk->status);
+	if (!interactive(sk) && sk->stat)
+		exit(sk->stat);
 	if (builtin_s == -2)
 	{
 		if (sk->err_num == -1)
-			exit(sk->status);
-		exit(sk->err_num);
+			exit(sk->stat);
+		exit(sk->error_n);
 	}
 	return (builtin_s);
 }
@@ -93,10 +93,10 @@ void f_cmd(AWS *sk)
 		sk->line_flag = 0;
 	}
 	for (int i = 0, int k; sk->arg[i]; i++)
-		if (!s_delimeter(in->arg[i], "\t\n"))
+		if (!s_delimeter(sk->arg[i], "\t\n"))
 			k++;
 	((k) ? (NULL) : (return));
-	path = f_path(sk, _getenv(in, "PATH="), sk->arg[0]);
+	path = f_path(sk, _getenv(sk, "PATH="), sk->arg[0]);
 	if (path)
 	{
 		sk->path = path;
@@ -105,7 +105,7 @@ void f_cmd(AWS *sk)
 	else
 	{
 		if ((interactive(sk) || _getenv(sk, "PATH=")
-					|| sk->arg[0][0] == '/') && i_cmd(sk, sk->arg[0]))
+					|| sk->arg == '/') && i_cmd(sk, sk->arg[0]))
 			fork_cmd(sk);
 		else if (*(sk->arg) != '\n')
 		{
@@ -124,10 +124,10 @@ void fork_cmd(AWS *sk)
 	pid_t child_p;
 
 	child_p = fork();
-	((child_p == -1) ? (perror("Error:"), return) : (NULL));
+	((child_p == -1) ? (perror("Error:"), return;) : (NULL));
 	if (child_p == 0)
 	{
-		if (execve(sk->path, in->arg, g_environ(sk)) == -1)
+		if (execve(sk->path, sk->arg, g_environ(sk)) == -1)
 		{
 			f_info(sk, 1);
 			if (errno == EACCES)

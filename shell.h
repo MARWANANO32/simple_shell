@@ -15,9 +15,12 @@
 #include <limits.h>
 
 #define BUFFER 1000
-#define INFO_INIT
-{NULL, NULL, NULL, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL,
+#define INFO_INIT \
+{NULL, NULL, NULL, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, \
 	0, 0, 0, 0}
+#define BUF_FLUSH -1
+#define READ_BUF_SIZE 1024
+#define WRITE_BUF_SIZE 1024
 
 extern char **environ;
 
@@ -61,8 +64,8 @@ typedef struct AWS
 	int cmd_type; /* pointer to cmd */
 	int hist_count;
 	int readfi;
-	list *history;
-	list alias;
+	AWS *history;
+	AWS alias;
 } AWS;
 
 /**
@@ -77,6 +80,17 @@ typedef struct OPPS
 	char *str;
 	struct OPPS *next;
 } OPPS_t;
+
+/**
+ * struct builtin - contains a builts
+ * @type: the command flags
+ * @func: the func
+ */
+typedef struct builtin
+{
+	char *type;
+	int (*func)(AWS *);
+} b_table;
 
 /***string.c***/
 int _strlen(const char *, const char *);
@@ -109,7 +123,7 @@ void *s_realloc(void *, unsigned int, unsigned int);
 int _sfree(int **);
 
 /***check.c***/
-int interactive(mar_t *valid);
+int interactive(AWS *valid);
 int s_delimeter(char s, char *delimeter);
 int t_isalphatic(int c);
 int u_atio(char *mar);
@@ -117,7 +131,7 @@ int u_atio(char *mar);
 /***err.c***/
 void _replace(char *BUFF);
 char *c_number(long int v, int a, int flags);
-void t_prinerror(t_mar *ppa, char *our);
+void t_prinerror(AWS *ppa, char *our);
 int t_printf(int in, int fd);
 int t_erratio(char q);
 
@@ -132,7 +146,7 @@ void free_lists(OPPS_t **header_str);
 size_t list_length(const OPPS_t *w);
 char **list_string(OPPS_t *header);
 size_t p_list(const OPPS_t *w);
-opps_t *node_with(OPPS_t *node, char *pre, char s);
+OPPS_t *node_with(OPPS_t *node, char *pre, char s);
 ssize_t get_index(OPPS_t *header, OPPS_t *node);
 
 /**shsh.c***/
